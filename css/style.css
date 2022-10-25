@@ -13,6 +13,7 @@
   --teal: #20c997;
   --cyan: #0dcaf0;
   --dark: #292a2b;
+  /* color: white; */
 }
 *,
 ::before,
@@ -34,6 +35,7 @@ h6 {
 }
 h1 {
   font-size: 3.5rem;
+  color: var(--blue);
 }
 h2 {
   font-size: 2.25rem;
@@ -49,6 +51,43 @@ h5 {
 }
 h6 {
   font-size: 0.7rem;
+}
+
+section,
+div {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+section {
+  background-color: var(--dark);
+  height: 50vh;
+}
+div {
+  width: 20%;
+  height: 50%;
+  background-color: var(--green);
+  font-size: 5rem;
+  transition: all 1s ease-in-out;
+}
+
+.light {
+  background-color: var(--green);
+  color: white;
+  transition: all 1s ease-in-out;
+}
+.dark {
+  background-color: var(--yellow);
+  color: var(--dark);
+  transition: all 1s ease-in-out;
+}
+nav{
+  font-size: 5rem;
+  color: var(--green);
+}
+.main{
+  margin-top: 2em;
 }
 
 /* Bootstrap breakpoints /
