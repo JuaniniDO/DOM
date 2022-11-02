@@ -80,6 +80,7 @@ window.addEventListener("load", () => {
   closeBttn.addEventListener("click", () => {
     alert.classList.toggle("dismissible");
   });
+  //sirve para que si el usuario hace enter, no haga nada.
   input.addEventListener("focus", () => {
     document.addEventListener("keydown", (e) => {
       if (e.code == "Enter" || e.code == "NumpadEnter") {
@@ -88,10 +89,12 @@ window.addEventListener("load", () => {
     });
   });
   arrow.addEventListener("click", (e) => {
-    // ELiminar los espacios al principio y al final del string.
+    //que no se pueda enviar el input vacío, trim sirve para eliminar espacios al principio/final del string
     if (input.value.trim() == "") {
-      console.log("Empty");
+      // console.log("Empty");
+      //que no se pueda enviar vacío
       e.preventDefault(); // Prevent submit
+      //que vuelva a poner el input vacío
       input.value = ""; // Reset value
       alert.classList.remove("dismissible");
     } else {
@@ -99,55 +102,76 @@ window.addEventListener("load", () => {
       input.value = "";
       id =
         Number(document.querySelector("tbody")?.lastElementChild?.id) + 1 || 0;
-
       document.querySelector("tbody").appendChild(generateRow(id, text));
       if (!alert.classList.contains("dismissible")) {
         alert.classList.add("dismissible");
       }
     }
   });
+  // console.log(done);
+  // done[1].element.addEventListener('click', (e) => {console.log("working");});
 
-  /* done.addEventListener("click", (e) => {
-  console.log("Working!");
-}); */
-
+  //done item
   done.forEach((item) => {
     item.addEventListener("click", (e) => {
       deleteTask(e);
     });
   });
 
+  //trash item
   trash.forEach((item) => {
     item.addEventListener("click", (e) => {
-      removeRow(e);
+      removeRow(e, false);
     });
   });
+
+  //edit item
   edit.forEach((item) => {
     item.addEventListener("click", (e) => {
       editTask(e, false);
     });
-
   });
+
   task.forEach((item) => {
-    item.addEventListener("click", (e) => {
+    item.addEventListener("focus", (e) => {
       editTask(e, true);
     });
   });
+  
 });
 
-let editTask = (e, onFocus) => {
+// Functions
+const editTask = (e, onFocus) => {
+  let editable = e;
   if (onFocus) {
-    console.log(e.target);
-    
+    // console.log(e.target);
+    editable.target.classList.add("editable");
+    document.addEventListener("keydown", (e) => {
+      // console.log(e.code);
+      if (e.code == "Escape") {
+        editable.target.classList.remove("editable");
+        editable.target.blur(); //ELimina el foco
+        if (editable.target.innerHTML == "") {
+          removeRow(editable, true);
+        }
+      }
+    });
+    editable.target.addEventListener("blur", () => {
+      editable.target.classList.remove("editable");
+      if (editable.target.innerHTML == "") {
+        removeRow(editable, true);
+      }
+    });
   } else {
-  let editable =e.target.parentNode.parentNode.previousElementSibling.lastElementChild;
-  console.log(editable);
-  editable.classList.add("editable");
-  editable.focus()
-}
+    let editable =
+      e.target.parentNode.parentNode.previousElementSibling.lastElementChild;
+    // console.log(editable);
+    editable.classList.add("editable");
+    editable.focus();
+  }
 };
 
-let deleteTask = (e) => {
+const deleteTask = (e) => {
   let task = e.target.nextElementSibling;
   text = task.innerHTML;
 
@@ -160,35 +184,57 @@ let deleteTask = (e) => {
   }
 };
 
-let removeRow = (e) => {
-  e.target.parentNode.parentNode.parentNode.remove();
+const removeRow = (e, editing) => {
+  if (editing) {
+    e.target.parentNode.parentNode.remove();
+  } else {
+    e.target.parentNode.parentNode.parentNode.remove();
+  }
 };
 
+
+//Refactorizamos el código encapsulando la función
 const generateRow = (id, text) => {
   // Creando una nueva fila.
   let newRow = document.createElement("tr");
   newRow.setAttribute("id", id);
   newRow.innerHTML = `
-  <td>
-  <i class="fa-solid fa-circle-check fa-2x"></i>
-  <span
-  class="task"
-  contenteditable="true">
-  ${text}
-  </span>
-  </td>
-  <td>
-  <span class="fa-stack fa-2x">
-  <i class="fa-solid fa-square fa-stack-2x"></i>
-  <i class="fa-solid fa-pencil fa-stack-1x fa-inverse"></i>
-  </span>
-  </td>
-  <td>
-  <span class="fa-stack fa-2x">
-  <i class="fa-solid fa-square fa-stack-2x"></i>
-  <i class="fa-solid fa-trash fa-stack-1x fa-inverse"></i>
-  </span>
-  </td>
-  `;
+      <td>
+      <i class="fa-solid fa-circle-check fa-2x"></i>
+      <span
+      class="task"
+      contenteditable="true">
+      ${text}
+      </span>
+      </td>
+      <td>
+      <span class="fa-stack fa-2x">
+      <i class="fa-solid fa-square fa-stack-2x"></i>
+      <i class="fa-solid fa-pencil fa-stack-1x fa-inverse"></i>
+      </span>
+      </td>
+      <td>
+      <span class="fa-stack fa-2x">
+      <i class="fa-solid fa-square fa-stack-2x"></i>
+      <i class="fa-solid fa-trash fa-stack-1x fa-inverse"></i>
+      </span>
+      </td>
+      `;
+
+  newRow.firstElementChild.firstElementChild.addEventListener("click", (e) => {
+    deleteTask(e);
+  });
+  newRow.firstElementChild.lastElementChild.addEventListener("click", (e) => {
+    editTask(e, true);
+  });
+  newRow.firstElementChild.nextElementSibling.firstElementChild.addEventListener(
+    "click",
+    (e) => {
+      editTask(e, false);
+    }
+  );
+  newRow.lastElementChild.firstElementChild.addEventListener("click", (e) => {
+    removeRow(e, false);
+  });
   return newRow;
 };
