@@ -85,7 +85,7 @@ const GenerateContent = class {
     }
   
   };
-  
+  //new es una palabra independiente que debe ir con un espacio
   let content = new GenerateContent();
   content.getYear();
   content.setPageContent(content.fruits)
@@ -95,6 +95,5 @@ const GenerateContent = class {
 
 
 
-//new es una palabra independiente que debe ir con un espacio
-let obj = new GenerateContent();
-obj.getYear();
+
+
